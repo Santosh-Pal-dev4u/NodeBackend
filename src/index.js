@@ -8,7 +8,7 @@ const port = process.env.PORT;
 connectToDB();
 
 app.use(morgan('dev'));
-
+/*
 const githubData =
 {
     "login": "Santosh-Pal-dev4u",
@@ -87,6 +87,7 @@ app.get('/git', (req, res) => {
 app.get('/login', (req, res) => {
     res.send('<h1>please login </h1>')
 })
+*/
 
 app.listen(process.env.PORT, () => {
     console.log(`Example app listening on port http://localhost:${port}`)
