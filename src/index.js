@@ -1,7 +1,13 @@
 import { app } from "./app.js";
-import 'dotenv/config';
 import morgan from "morgan";
 import { connectToDB } from "./db/database.js";
+import dotenv from "dotenv"
+
+
+dotenv.config({
+    path: './.env'
+})
+
 
 const port = process.env.PORT || 3000;
 

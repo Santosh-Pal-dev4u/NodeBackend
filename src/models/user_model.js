@@ -6,7 +6,6 @@ const userSchema = new Schema({
 
     id: {
         type: String,
-        required: true,
         unique: true,
     },
     watchHistory: {
@@ -34,11 +33,11 @@ const userSchema = new Schema({
     },
     avatar: {
         type: String,
-        required: true,
+        // required: true,
     },
-    coverImage: {
-        type: String,
-    },
+    // coverImage: {
+    //     type: String,
+    // },
     password: {
         type: String,
         required: [true, "password is required"],

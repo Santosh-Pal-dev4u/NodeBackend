@@ -1,28 +1,30 @@
-import { asyncHandler } from '../utils/asyncHandler.js';
+import asyncHandler from '../utils/asyncHandler.js';
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models//user_model.js";
-import uploadImageonCloudinary from "../utils/cloudinary.js"
+import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import ApiResponse from '../utils/ApiResponse.js';
+import { upload } from '../middlewares/multer_middleware.js';
+
 
 const registerUser = asyncHandler(async (req, res) => {
 
-  const { fullName, email, userName, password } = req.body
+  const { fullname, email, username, password } = req.body
   console.log("email :", email)
-  console.log("userName :", userName)
-  console.log("fullName :", fullName)
+  console.log("userName :", username)
+  console.log("fullName :", fullname)
   console.log("password :", password)
 
   // validation for empty field
   if (
-    [fullName, userName, password, email].some((field) =>
+    [fullname, username, password, email].some((field) =>
       field?.trim() === "")
   ) {
     throw new ApiError(400, "All field are required!")
   }
 
   // checking existed user in databse 
-  const exitedUser = User.findOne({
-    $or: [{ email }, { userName }]
+  const exitedUser = await User.findOne({
+    $or: [{ email }, { username }]
   })
 
   if (exitedUser) {
@@ -30,30 +32,54 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // handling avatar and cover images
+  // const avatarLocalPath = req.files?.avatar[0]?.path;
+  // const coverLocalPath = req.files?.coverImage[0]?.path;
+  // coverLocalPath = req.files?.coverImage?.[0]?.path;
 
-  const avatarLocalPath = req.field?.avatar[0]?.path;
-  const coverLocalPath = req.field?.coverImage[0]?.path;
+  // handling avatar and cover images
+  // const avatarLocalPath = req.files?.avatar[0]?.path;
 
-  if (!avatarLocalPath) {
-    throw new ApiError(400, "avatatLocalPath not found!")
-  }
+  // let coverImageLocalPath;
+  // if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+  //     coverImageLocalPath = req.files.coverImage[0].path;
+  // }
+
+  // console.log("avatarLocalPath :", avatarLocalPath);
+  // console.log("req.files:", req.files);
+  // console.log("coverLocalPath :", coverImageLocalPath);
+
+
+  // if (!avatarLocalPath) {
+  //   throw new ApiError(400, "avatarLocalPath not found!");
+  // }
+  // if (!coverImageLocalPath) {
+  //   throw new ApiError(400, "coverImageLocalPath not found!");
+  // }
+
   // uploading on cloudinary
-  const avatar = await uploadImageonCloudinary(avatarLocalPath)
-  const coverImage = await uploadImageonCloudinary(coverLocalPath)
+  // const avatar = await uploadOnCloudinary(avatarLocalPath)
+  // const coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
-  if (!avatar) {
-    throw new ApiError(400, "avatat not found!")
-  }
+  // console.log("coverImage :", coverImage)
+  // console.log("avatar :", avatar)
+
+  // if (!avatar) {
+  //   throw new ApiError(400, "avatar not found!")
+  // }
+  // if (!coverImage) {
+  //   throw new ApiError(400, "coverImage not found!")
+  // }
 
   // creating user 
 
   const user = await User.create(
     {
-      fullName,
+      fullname,
       email,
-      userName: userName.toLowerCase(),
-      avatar: avatar.url,
-      coverImage: coverImage?.url || "",
+      username: username.toLowerCase(),
+      // avatar: avatar?.url || "",
+      // coverImage: coverImage?.url || "",
+      password,
 
     }
   )
@@ -71,4 +97,8 @@ const registerUser = asyncHandler(async (req, res) => {
   )
 
 });
+
+
+
+
 export { registerUser };
